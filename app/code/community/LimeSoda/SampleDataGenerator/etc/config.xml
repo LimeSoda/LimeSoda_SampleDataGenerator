@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<config>
+    <modules>
+        <LimeSoda_SampleDataGenerator>
+            <version>0.0.4</version>
+        </LimeSoda_SampleDataGenerator>
+    </modules>
+    
+    <admin>
+    	<routers>
+            <adminhtml>
+                <args>
+                    <modules>
+                        <ls_sampledatagenerator before="Mage_Adminhtml">LimeSoda_SampleDataGenerator_Adminhtml</ls_sampledatagenerator>
+                    </modules>
+                </args>
+            </adminhtml>
+        </routers>
+    </admin>
+    <adminhtml>
+        <layout>
+            <updates>
+                <ls_sampledatagenerator>
+                    <file>ls_sampledatagenerator/ls_sampledatagenerator.xml</file>
+                </ls_sampledatagenerator>
+            </updates>
+        </layout>
+    </adminhtml>
+    
+    <global>
+    	<blocks>
+    		<ls_sampledatagenerator>
+    			<class>LimeSoda_SampleDataGenerator_Block</class>
+    		</ls_sampledatagenerator>
+    	</blocks>
+    	<helpers>
+    		<ls_sampledatagenerator>
+    			<class>LimeSoda_SampleDataGenerator_Helper</class>
+    		</ls_sampledatagenerator>
+    	</helpers>
+    	<models>
+    		<ls_sampledatagenerator>
+    			<class>LimeSoda_SampleDataGenerator_Model</class>
+    			<resourceModel>ls_sampledatagenerator_resource</resourceModel>
+    		</ls_sampledatagenerator>
+            <ls_sampledatagenerator_resource>
+                <class>LimeSoda_SampleDataGenerator_Model_Resource</class>
+                <entities>
+                    <rule>
+                        <table>ls_sampledatagenerator_rule</table>
+                    </rule>
+               </entities>
+           	</ls_sampledatagenerator_resource>
+    	</models>
+    	<resources>
+            <ls_sampledatagenerator_setup>
+                <setup>
+                    <module>LimeSoda_SampleDataGenerator</module>
+                </setup>
+            </ls_sampledatagenerator_setup>
+        </resources>
+    </global>
+</config>

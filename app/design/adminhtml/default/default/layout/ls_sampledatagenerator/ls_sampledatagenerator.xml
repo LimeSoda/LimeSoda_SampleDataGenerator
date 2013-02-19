@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<layout>
+    <adminhtml_sampledatagenerator_index>
+        <reference name="content">
+            <block type="ls_sampledatagenerator/adminhtml_rule" name="ls_sampledatagenerator_adminhtml_rule_container" />
+        </reference>
+    </adminhtml_sampledatagenerator_index>
+</layout>

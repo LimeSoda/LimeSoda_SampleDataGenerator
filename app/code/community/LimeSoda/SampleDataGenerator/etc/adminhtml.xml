@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<config>
+    <menu>
+        <ls_development translate="title">
+            <title>Development</title>
+            <sort_order>500</sort_order>
+            <children>
+                <ls_sampledatagenerator translate="title" module="ls_sampledatagenerator">
+                    <title>Sample Data Generator</title>
+                    <sort_order>100</sort_order>
+                    <action>adminhtml/sampleDataGenerator/index</action>
+                </ls_sampledatagenerator>
+            </children>
+        </ls_development>
+    </menu>
+    <acl>
+        <resources>
+        	<all>
+                <title>Allow everything</title>
+            </all>
+            <admin>
+                <children>
+                    <ls_development translate="title">
+                        <title>Development</title>
+                        <sort_order>15</sort_order>
+                    </ls_development>
+               </children>
+           </admin>
+        </resources>
+    </acl>
+</config>
