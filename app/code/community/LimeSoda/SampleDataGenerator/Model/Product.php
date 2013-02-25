@@ -2,35 +2,123 @@
 
 class LimeSoda_SampleDataGenerator_Model_Product extends LimeSoda_SampleDataGenerator_Model_Entity
 {
-    protected $_attributeModel = null;
-    protected $_categoryModel = null;
-    protected $_setModel = null;
+    /**
+     * Default options for the website model.
+     * 
+     * @var array
+     */
+    protected $_defaultOptions = array(
+        'min_count' => 0,
+        'max_count' => 0,
+        'min_category_assignments_count' => 0,
+        'max_category_assignments_count' => 0,
+    );
     
-    private $_products_created = Array();
+    /**
+     * Returns an array of all attribute set ids in the system.
+     * 
+     * @return array
+     */
+    protected function _getAttributeSetIds()
+    {
+        $result = array();
+        
+        foreach(Mage::getModel('catalog/product_attribute_set_api')->items() as $item) {
+            $result[] = $item['set_id'];
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Returns an array with $count random entries of the provided array.
+     * 
+     * @param array $sourceArray
+     * @param int $count
+     * @return array
+     */
+    protected function _getRandomSelection(array $sourceArray, $count)
+    {
+        $keys = array_rand($sourceArray, $count);
+        
+        $result = array();
+        foreach ($keys as $key) {
+            $result[] = $sourceArray[$key];
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * Creates the products.
+     * 
+     * @param array $options
+     * @return array Array with ids of created products
+     */
+    public function create(array $options)
+    {
+        $options = array_merge($this->_defaultOptions, $options);
+        
+        if ($options['min_count'] > $options['max_count']) {
+            throw new DomainException("Minimum count must not be bigger than maximum count.");
+        } elseif ($options['min_count'] == 0 && $options['max_count'] == 0) {
+            return array();
+        }
+        
+        $count = rand($options['min_count'], $options['max_count']);
+        
+        $maxId = max(Mage::getModel('catalog/product')->getCollection()->getAllIds());
+        if ($maxId === false) {
+            $maxId = 0;
+        }
+        
+        $attributeSetIds = $this->_getAttributeSetIds();
+        $categoryIds = Mage::getModel('catalog/category')->getCollection()->getAllIds();
+        $websiteIds = Mage::getModel('core/website')->getCollection()->getAllIds();
+        
+        $results = array();
+        for ($i = 1; $i <= $count; $i++) {
+            $nextId = $maxId + $i;
+            $categoryAssignmentIds = $this->_getRandomSelection($categoryIds, rand($options['min_category_assignments_count'],$options['max_category_assignments_count']));
+            $results[] = $this->_createProduct($nextId, $attributeSetIds, $categoryAssignmentIds, $websiteIds);
+        }
+        
+        if (count($results) === 1) {
+            Mage::getSingleton('adminhtml/session')->addSuccess(
+                Mage::helper('ls_sampledatagenerator')->__('1 product has been generated.')
+            );
+        } else {
+            Mage::getSingleton('adminhtml/session')->addSuccess(
+                Mage::helper('ls_sampledatagenerator')->__('%s products have been generated.', count($results))
+            );
+        }
+        
+        return $results;
+    }    
+    
     private $_products_deleted = 0;
     
     /**
-     * @refactor: sollte nicht vervielfacht sein, wird außerdem nicht richtig gesetzt, da das im Konstruktor vom Processor gemacht wird.
+     * Creates a product.
+     * 
+     * @param int $nextId Next available product id
+     * @param array $attributeSetIds
+     * @param array $categoryAssignmentIds
+     * @param array $websiteIds
+     * @return int The id of the created product
      */
-    private $numOfAttributesPerSet = 5;
-    
-    private function _createProduct($prodItem)
+    protected function _createProduct($nextId, array $attributeSetIds, array $categoryAssignmentIds, array $websiteIds)
     {
-        if($this->_config["attributesets"]["items"] == 0){
-            $setItem = 0;
-        }else{
-            $setItem = $prodItem;
-        }
         $product = Mage::getModel('catalog/product');
-
+        
         // Build the product
-        $product->setAttributeSetId($this->_setModel[$setItem]);
+        $product->setAttributeSetId($attributeSetIds[array_rand($attributeSetIds)]);
         $product->setTypeId(Mage_Catalog_Model_Product_Type::TYPE_SIMPLE);
         
-        $product->setName('Product Name ' . ($prodItem+1));
-        $product->setDescription('Product Description ' . ($prodItem+1));
-        $product->setShortDescription('Product Short Description ' . ($prodItem+1));
-        $product->setSku('sample_product_sku_' . ($prodItem+1));
+        $product->setName('Product Name ' . $nextId);
+        $product->setDescription('Product Description ' . $nextId);
+        $product->setShortDescription('Product Short Description ' . $nextId);
+        $product->setSku('sample_product_sku_' . $nextId);
         $product->setWeight(1.0000);
         $product->setStatus(Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
         $product->setVisibility(Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH);
@@ -38,40 +126,10 @@ class LimeSoda_SampleDataGenerator_Model_Product extends LimeSoda_SampleDataGene
         $product->setPrice(1.00);
         $product->setTaxClassId(2);
         
-        if($this->_config["attributesets"]["items"] > 0){
-            
-            $assignedAttributes = $this->_attributeModel->getAssignedAttributes();
-            for($i=0; $i<count($assignedAttributes[$this->_setModel[$setItem]]); $i++){
-                    $attID = $assignedAttributes[$this->_setModel[$setItem]][$i];
-                
-                    $product->setData('sample_attribute_'.($attID+1),"sample_value_".($attID+1));
-            }
-        
-        }else{
-            $attsCreated = Array();
-            $productAttributeCount = count($this->_attributeModel->getCreatedAttributes());
-            for($i = 0; $i < $this->numOfAttributesPerSet; $i++){
-            
-                $attID = rand(1,$productAttributeCount);
-                
-                if (in_array($attID, $attsCreated)) {
-                    $i--;
-                }else{
-                    $attsCreated[] = $attID;
-                    $product->setData('sample_attribute_'.$attID,"sample_value_".$attID);
-                }
-                
-            }
-            
-        }
-        
-        $catsCreated = $this->_categoryModel->getCreatedCategories();
-        $product->setCategoryIds(array($catsCreated[$prodItem]));
-        $product->setWebsiteIDs(array(1));
+        $product->setCategoryIds($categoryAssignmentIds);
+        $product->setWebsiteIDs($websiteIds);
 
-        //SAVE
         $product->save();
-        $this->_products_created[] = $product->getId();
         
         $stockItem = Mage::getModel('cataloginventory/stock_item');
         $stockItem->loadByProduct($product->getId());
@@ -84,23 +142,13 @@ class LimeSoda_SampleDataGenerator_Model_Product extends LimeSoda_SampleDataGene
         $stockItem->setData('use_config_manage_stock', 1);
         $stockItem->save();
 
-    }
-    
-    public function createProducts($setModel, $attributeModel, $categoryModel)
-    {
-        $this->_attributeModel = $attributeModel;
-        $this->_categoryModel = $categoryModel;
-        $this->_setModel = $setModel;
-        
-        for ($i = 0; $i < $this->_config["products"]["items"]; $i++){
-            $this->_createProduct($i);
-        }
-        
-        $this->_debug_msg .= "[INFO] - " . count($this->_products_created) . " products created<br/>";
+        return $product->getId();
     }
     
     public function deleteProducts()
     {
+        /**
+         * @todo: refactor / adjust to new code
         $product_id = Mage::getModel('catalog/product')->getIdBySku("sample_product_sku_".($this->_products_deleted+1));
         if($product_id){
             $product = Mage::getModel('catalog/product_api');
@@ -108,6 +156,7 @@ class LimeSoda_SampleDataGenerator_Model_Product extends LimeSoda_SampleDataGene
             $this->_products_deleted++;
             $this->deleteProducts();
         }
+         */ 
     }
     
 }

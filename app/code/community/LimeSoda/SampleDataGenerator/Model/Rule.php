@@ -9,13 +9,41 @@ class LimeSoda_SampleDataGenerator_Model_Rule extends Mage_Core_Model_Abstract
     }
     
     /**
+     * @todo: add column to table, write de- and serialisation get/set methods
+     */
+    public function getCategoryOptions()
+    {
+        return array();
+        
+        return array(
+            'categories' => array(
+                'min_count' => 7,
+                'max_count' => 7,
+                'subcategories' => array(
+                    'categories' => array(
+                        'min_count' => 6,
+                        'max_count' => 6,
+                        'subcategories' => array(
+                            'categories' => array(
+                                'min_count' => 3,
+                                'max_count' => 3,
+                                'subcategories' => array()
+                            )
+                        )
+                    )
+                )
+            )
+        );
+    }
+    
+    /**
      * Returns whether at least one website should be created.
      * 
      * @return boolean
      */
-    public function shouldWebsitesBeCreated()
+    public function shouldProductsBeCreated()
     {
-        return $this->getWebsiteMinCount() > 0;
+        return $this->getProductMinCount() > 0;
     }
     
     /**
@@ -38,5 +66,14 @@ class LimeSoda_SampleDataGenerator_Model_Rule extends Mage_Core_Model_Abstract
         return $this->getStoreViewMinCount() > 0;
     }    
     
+    /**
+     * Returns whether at least one website should be created.
+     * 
+     * @return boolean
+     */
+    public function shouldWebsitesBeCreated()
+    {
+        return $this->getWebsiteMinCount() > 0;
+    }
     
 }

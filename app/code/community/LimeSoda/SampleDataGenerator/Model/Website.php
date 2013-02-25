@@ -28,7 +28,7 @@ class LimeSoda_SampleDataGenerator_Model_Website
             return array();
         }
         
-        $result = array();
+        $results = array();
         $count = rand($options['min_count'], $options['max_count']);
         $maxId = max(Mage::getModel('core/website')->getCollection()->getAllIds());
         

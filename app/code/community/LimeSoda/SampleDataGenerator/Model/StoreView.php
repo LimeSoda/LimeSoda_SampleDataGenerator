@@ -58,7 +58,7 @@ class LimeSoda_SampleDataGenerator_Model_StoreView
             return array();
         }
         
-        $result = array();
+        $results = array();
         $storeViewId = max(Mage::getModel('core/store')->getCollection()->getAllIds());
         
         foreach ($this->_getWebsites($options['website_ids']) as $websiteId) {

@@ -40,7 +40,7 @@ class LimeSoda_SampleDataGenerator_Model_StoreGroup
             return array();
         }
         
-        $result = array();
+        $results = array();
         $groupId = max(Mage::getModel('core/store_group')->getCollection()->getAllIds());
         $rootCategoryIds = Mage::getModel('catalog/category')->getCollection()->addRootLevelFilter()->getAllIds();
         
