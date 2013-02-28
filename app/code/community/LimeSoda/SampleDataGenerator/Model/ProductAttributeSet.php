@@ -16,7 +16,7 @@ class LimeSoda_SampleDataGenerator_Model_ProductAttributeSet extends LimeSoda_Sa
      */
     protected $_defaultOptions = array(
         'min_count' => 0,
-        'max_count' => 0,
+        'max_count' => 0
     );
     
     private $_attsets_deleted = 0;

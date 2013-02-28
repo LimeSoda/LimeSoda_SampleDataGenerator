@@ -8,11 +8,44 @@ class LimeSoda_SampleDataGenerator_Model_ProductAttribute extends LimeSoda_Sampl
      * @var array
      */
     protected $_defaultOptions = array(
+        'attribute_set_ids' => array(),
         'min_count' => 0,
         'max_count' => 0,
     );
     
     private $_atts_deleted = 0;
+    
+    /**
+     * Adds attributes to sets.
+     * 
+     * @param int $attributeId
+     * @param array $attributeSetIds
+     * @return void
+     */
+    protected function _assignAttributeToSets($attributeId, array $attributeSetIds)
+    {
+        $model = Mage::getModel("catalog/product_attribute_set_api");
+        foreach ($attributeSetIds as $attributeSetId) {
+            $model->attributeAdd($attributeId, $attributeSetId);
+        }
+        unset($model);
+    }
+    
+    /**
+     * Returns the attribute set ids where attributes should be added to.
+     * 
+     * @param array $ids
+     * @return array
+     */
+    protected function _getAttributeSetIds(array $ids)
+    {
+        if (!empty($ids)) {
+            return $ids;
+        }
+        
+        $entityType = Mage::getModel('catalog/product')->getResource()->getEntityType();
+        return Mage::getResourceModel('eav/entity_attribute_set_collection')->setEntityTypeFilter($entityType->getId())->getAllIds();
+    }
     
     /**
      * Creates the product attributes.
@@ -32,6 +65,8 @@ class LimeSoda_SampleDataGenerator_Model_ProductAttribute extends LimeSoda_Sampl
         
         $results = array();
         $attributeId = max(Mage::getModel('eav/entity_attribute')->getCollection()->getAllIds());
+        
+        $attributeSetIds = $this->_getAttributeSetIds($options['attribute_set_ids']);
         
         $count = rand($options['min_count'], $options['max_count']);
         
@@ -61,8 +96,12 @@ class LimeSoda_SampleDataGenerator_Model_ProductAttribute extends LimeSoda_Sampl
                 "additional_fields" => array(),
                 "frontend_label" => array(array("store_id" => 0, "label" => "Sample Attribute {$attributeId}")),
             );
+            
+            $id = $model->create($attributeData);
+            
+            $this->_assignAttributeToSets($id, $attributeSetIds);
 
-            $results[] = $model->create($attributeData);
+            $results[] = $id;
         }
         
         if (count($results) === 1) {
