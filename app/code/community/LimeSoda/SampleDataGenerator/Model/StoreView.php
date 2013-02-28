@@ -9,7 +9,9 @@ class LimeSoda_SampleDataGenerator_Model_StoreView
      */
     protected $_defaultOptions = array(
         'min_count' => 0,
-        'max_count' => 0
+        'max_count' => 0,
+        'store_group_ids' => array(),
+        'website_ids' => array()
     );
     
     /**
