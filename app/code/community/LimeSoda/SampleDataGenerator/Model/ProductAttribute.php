@@ -14,7 +14,7 @@ class LimeSoda_SampleDataGenerator_Model_ProductAttribute extends LimeSoda_Sampl
     
     private $_atts_deleted = 0;
     
-     /**
+    /**
      * Creates the product attributes.
      * 
      * @param array $options

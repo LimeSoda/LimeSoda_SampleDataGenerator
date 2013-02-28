@@ -23,7 +23,7 @@ class LimeSoda_SampleDataGenerator_Model_Processor
     }
     
     /**
-     * Generates the products attributes according to the rule.
+     * Generates the product attributes according to the rule.
      * 
      * @param LimeSoda_SampleDataGenerator_Model_Rule $rule
      * @return array Ids of generated product attributes
@@ -36,6 +36,30 @@ class LimeSoda_SampleDataGenerator_Model_Processor
             $options = array(
                 'min_count' => $rule->getProductAttributeMinCount(),
                 'max_count' => $rule->getProductAttributeMaxCount()
+            );
+            
+            $ids = $model->create($options);
+        } else {
+            $ids = array();
+        }
+        
+        return $ids;
+    }
+
+    /**
+     * Generates the product attribute sets according to the rule.
+     * 
+     * @param LimeSoda_SampleDataGenerator_Model_Rule $rule
+     * @return array Ids of generated product attribute sets
+     */
+    protected function _generateProductAttributeSets(LimeSoda_SampleDataGenerator_Model_Rule $rule)
+    {
+        if ($rule->shouldProductAttributeSetsBeCreated()) {
+            $model = Mage::getModel('ls_sampledatagenerator/productAttributeSet');
+            
+            $options = array(
+                'min_count' => $rule->getProductAttributeSetMinCount(),
+                'max_count' => $rule->getProductAttributeSetMaxCount()
             );
             
             $ids = $model->create($options);
@@ -159,24 +183,19 @@ class LimeSoda_SampleDataGenerator_Model_Processor
      */
     public function generateData(LimeSoda_SampleDataGenerator_Model_Rule $rule)
     {
-        $websiteIds    = $this->_generateWebsites($rule);
-        $storeGroupIds = $this->_generateStoreGroups($rule, $websiteIds);
-        $storeViewIds  = $this->_generateStoreViews($rule, $websiteIds, $storeGroupIds);
-        $categoryIds   = $this->_generateCategories($rule);
-        $productIds    = $this->_generateProducts($rule);
-        $attributeIds  = $this->_generateProductAttributes($rule);
+        $websiteIds      = $this->_generateWebsites($rule);
+        $storeGroupIds   = $this->_generateStoreGroups($rule, $websiteIds);
+        $storeViewIds    = $this->_generateStoreViews($rule, $websiteIds, $storeGroupIds);
+        $categoryIds     = $this->_generateCategories($rule);
+        $productIds      = $this->_generateProducts($rule);
+        $attributeIds    = $this->_generateProductAttributes($rule);
+        $attributeSetIds = $this->_generateProductAttributeSets($rule); 
         
         return $this;
         
         /**
          * @todo: rewrite code
          *
-        $attributeModel = Mage::getModel('ls_sampledatagenerator/productAttributes');
-        $attributeModel->setConfig($this->_config)->createAttributes();
-        
-        $setModel = Mage::getModel('ls_sampledatagenerator/productAttributeSets');
-        $setModel->setConfig($this->_config)->createAttributeSets();
-        
         $attributeAssignModel = Mage::getModel('ls_sampledatagenerator/attributeAssign');
         $attributeAssignModel->setConfig($this->_config)->assignAttributes($setModel->getAttributeSets(), $attributeModel->getCreatedAttributes());
         
