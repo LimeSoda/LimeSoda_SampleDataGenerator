@@ -10,7 +10,7 @@ $installer->getConnection()->addColumn(
         'type'      => Varien_Db_Ddl_Table::TYPE_INTEGER,
         'unsigned'  => true,
         'nullable'  => false,
-        'comment'   => 'Minimum number of store views to create per store group'
+        'comment'   => 'Should store groups only be added to new websites?'
     )
 );
 
@@ -21,7 +21,7 @@ $installer->getConnection()->addColumn(
         'type'      => Varien_Db_Ddl_Table::TYPE_INTEGER,
         'unsigned'  => true,
         'nullable'  => false,
-        'comment'   => 'Maximum number of store views to create per store group'
+        'comment'   => 'Should store groups only be added to new websites?'
     )
 );
 
