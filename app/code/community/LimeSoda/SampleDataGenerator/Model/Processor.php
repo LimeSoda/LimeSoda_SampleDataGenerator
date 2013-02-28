@@ -23,6 +23,30 @@ class LimeSoda_SampleDataGenerator_Model_Processor
     }
     
     /**
+     * Generates the products attributes according to the rule.
+     * 
+     * @param LimeSoda_SampleDataGenerator_Model_Rule $rule
+     * @return array Ids of generated product attributes
+     */
+    protected function _generateProductAttributes(LimeSoda_SampleDataGenerator_Model_Rule $rule)
+    {
+        if ($rule->shouldProductAttributesBeCreated()) {
+            $model = Mage::getModel('ls_sampledatagenerator/productAttribute');
+            
+            $options = array(
+                'min_count' => $rule->getProductAttributeMinCount(),
+                'max_count' => $rule->getProductAttributeMaxCount()
+            );
+            
+            $ids = $model->create($options);
+        } else {
+            $ids = array();
+        }
+        
+        return $ids;
+    }
+    
+    /**
      * Generates the products according to the rule.
      * 
      * @param LimeSoda_SampleDataGenerator_Model_Rule $rule
@@ -140,6 +164,7 @@ class LimeSoda_SampleDataGenerator_Model_Processor
         $storeViewIds  = $this->_generateStoreViews($rule, $websiteIds, $storeGroupIds);
         $categoryIds   = $this->_generateCategories($rule);
         $productIds    = $this->_generateProducts($rule);
+        $attributeIds  = $this->_generateProductAttributes($rule);
         
         return $this;
         

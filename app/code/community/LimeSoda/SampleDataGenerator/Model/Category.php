@@ -80,7 +80,9 @@ class LimeSoda_SampleDataGenerator_Model_Category extends LimeSoda_SampleDataGen
     public function create(array $options)
     {
         $options = array_merge($this->_defaultOptions, $options);
-        $rootCategoryId = array_shift(Mage::getModel('catalog/category')->getCollection()->addRootLevelFilter()->getAllIds());
+        $categoryIds = Mage::getModel('catalog/category')->getCollection()->addRootLevelFilter()->getAllIds();
+        $rootCategoryId = array_shift($categoryIds);
+        unset($categoryIds);
         
         $results = $this->_createCategories($options['categories'], $rootCategoryId);
         

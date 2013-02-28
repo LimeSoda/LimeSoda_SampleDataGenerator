@@ -37,6 +37,16 @@ class LimeSoda_SampleDataGenerator_Model_Rule extends Mage_Core_Model_Abstract
     }
     
     /**
+     * Returns whether at least one product attribute should be created.
+     * 
+     * @return boolean
+     */
+    public function shouldProductAttributesBeCreated()
+    {
+        return $this->getProductAttributeMinCount() > 0;
+    }
+    
+    /**
      * Returns whether at least one website should be created.
      * 
      * @return boolean
