@@ -90,11 +90,11 @@ class LimeSoda_SampleDataGenerator_Model_StoreView
         
         if (count($results) === 1) {
             Mage::getSingleton('adminhtml/session')->addSuccess(
-                Mage::helper('ls_sampledatagenerator')->__('1 store group has been generated.')
+                Mage::helper('ls_sampledatagenerator')->__('1 store view has been generated.')
             );
         } else {
             Mage::getSingleton('adminhtml/session')->addSuccess(
-                Mage::helper('ls_sampledatagenerator')->__('%s store groups have been generated.', count($results))
+                Mage::helper('ls_sampledatagenerator')->__('%s store views have been generated.', count($results))
             );
         }
 

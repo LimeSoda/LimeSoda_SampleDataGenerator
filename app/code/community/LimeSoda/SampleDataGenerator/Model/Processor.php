@@ -113,6 +113,11 @@ class LimeSoda_SampleDataGenerator_Model_Processor
         if ($rule->shouldStoreGroupsBeCreated()) {
             $storeGroupModel = Mage::getModel('ls_sampledatagenerator/storeGroup');
             
+            $options = array(
+                'min_count' => $rule->getStoreGroupMinCount(),
+                'max_count' => $rule->getStoreGroupMaxCount()
+            );
+
             if ($rule->getAddStoreGroupsOnlyToNewWebsites()) {
                 $options['website_ids'] = $websiteIds;
             }
