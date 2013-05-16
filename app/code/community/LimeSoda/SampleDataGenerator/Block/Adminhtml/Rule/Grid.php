@@ -53,6 +53,11 @@ class LimeSoda_SampleDataGenerator_Block_Adminhtml_Rule_Grid extends Mage_Adminh
     {
         $this->setMassactionIdField('rule_id');
         $this->getMassactionBlock()->setFormFieldName('rule');
+        
+        $this->getMassactionBlock()->addItem('delete', array(
+             'label'    => Mage::helper('ls_sampledatagenerator')->__('Delete'),
+             'url'      => $this->getUrl('*/*/massDelete')
+        ));
 
         $this->getMassactionBlock()->addItem('generate', array(
              'label'    => Mage::helper('ls_sampledatagenerator')->__('Generate'),
@@ -61,12 +66,12 @@ class LimeSoda_SampleDataGenerator_Block_Adminhtml_Rule_Grid extends Mage_Adminh
 
         return $this;
     }
-     
+    
     /*
      * No edit action for now. 
+     */ 
     public function getRowUrl($row)
     {
-        return $this->getUrl('* /* /edit', array('rule_id' => $row->getRuleId()));
+        return $this->getUrl('*/*/edit', array('ruleId' => $row->getRuleId()));
     }
-    */
 }

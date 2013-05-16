@@ -5,4 +5,29 @@
             <block type="ls_sampledatagenerator/adminhtml_rule" name="ls_sampledatagenerator_adminhtml_rule_container" />
         </reference>
     </adminhtml_sampledatagenerator_index>
+    
+    <adminhtml_sampledatagenerator_edit>
+    	<reference name="content">
+    		<block type="ls_sampledatagenerator/adminhtml_rule_edit" name="ls_sampledatagenerator_adminhtml_rule_edit" />
+    	</reference>
+    	<reference name="left">
+    		<block type="adminhtml/widget_tabs" name="ls_sampledatagenerator_adminhtml_rule_edit_tabs">
+    			<action method="setId"><id>form_tabs</id></action>
+    			<action method="setDestElementId"><elementId>edit_form</elementId></action>
+    			<action method="setTitle" translate="title" module="ls_sampledatagenerator"><text>Rule Information</text></action>
+    			
+    			<block type="ls_sampledatagenerator/adminhtml_rule_edit_tab_general" name="ls_sampledatagenerator_ruleedit_tab_general" />
+    			<block type="ls_sampledatagenerator/adminhtml_rule_edit_tab_websitesStores" name="ls_sampledatagenerator_ruleedit_tab_websitesStores" />
+    			<block type="ls_sampledatagenerator/adminhtml_rule_edit_tab_attributeSets" name="ls_sampledatagenerator_ruleedit_tab_attributeSets" />
+    			<block type="ls_sampledatagenerator/adminhtml_rule_edit_tab_attributes" name="ls_sampledatagenerator_ruleedit_tab_attributes" />
+    			<block type="ls_sampledatagenerator/adminhtml_rule_edit_tab_products" name="ls_sampledatagenerator_ruleedit_tab_products" />
+    			
+    			<action method="addTab"><name>general</name><block>ls_sampledatagenerator_ruleedit_tab_general</block></action>
+    			<action method="addTab"><name>websites_stores</name><block>ls_sampledatagenerator_ruleedit_tab_websitesStores</block></action>
+    			<action method="addTab"><name>attribute_sets</name><block>ls_sampledatagenerator_ruleedit_tab_attributeSets</block></action>
+    			<action method="addTab"><name>attributes</name><block>ls_sampledatagenerator_ruleedit_tab_attributes</block></action>
+    			<action method="addTab"><name>products</name><block>ls_sampledatagenerator_ruleedit_tab_products</block></action>
+			</block>
+    	</reference>
+    </adminhtml_sampledatagenerator_edit>
 </layout>

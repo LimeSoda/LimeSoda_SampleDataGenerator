@@ -39,7 +39,15 @@ class LimeSoda_SampleDataGenerator_Model_Product extends LimeSoda_SampleDataGene
      */
     protected function _getRandomSelection(array $sourceArray, $count)
     {
+        if ($count === 0) {
+            return array();
+        }
+
         $keys = array_rand($sourceArray, $count);
+        
+        if (!is_array($keys)) {
+            $keys = array($keys);
+        }
         
         $result = array();
         foreach ($keys as $key) {
@@ -67,10 +75,14 @@ class LimeSoda_SampleDataGenerator_Model_Product extends LimeSoda_SampleDataGene
         
         $count = rand($options['min_count'], $options['max_count']);
         
-        $maxId = max(Mage::getModel('catalog/product')->getCollection()->getAllIds());
-        if ($maxId === false) {
+        $productIds = Mage::getModel('catalog/product')->getCollection()->getAllIds();
+        
+        if (!empty($productIds)) {
+            $maxId = max($productIds) !== false ? max($productIds) : 0;
+        } else {
             $maxId = 0;
         }
+        
         
         $attributeSetIds = $this->_getAttributeSetIds();
         $categoryIds = Mage::getModel('catalog/category')->getCollection()->getAllIds();

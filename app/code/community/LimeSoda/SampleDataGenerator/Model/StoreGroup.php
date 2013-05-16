@@ -43,7 +43,7 @@ class LimeSoda_SampleDataGenerator_Model_StoreGroup
         $results = array();
         $groupId = max(Mage::getModel('core/store_group')->getCollection()->getAllIds());
         $rootCategoryIds = Mage::getModel('catalog/category')->getCollection()->addRootLevelFilter()->getAllIds();
-        
+
         foreach ($this->_getWebsites($options['website_ids']) as $website) {
             
             if ($website == Mage_Core_Model_App::ADMIN_STORE_ID) {
