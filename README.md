@@ -28,6 +28,11 @@ Uninstallation
 --------------
 1. Uninstall the extension like any other modman extension.
 
+Todos (@todo)
+-------------
+* Add events for creating data (products, categories, attribute options, ...)
+* Move current data creation to event observers.
+
 Support
 -------
 If you have any issues with this extension, open an issue on [GitHub](https://github.com/LimeSoda/LimeSoda_SampleDataGenerator/issues).

@@ -117,7 +117,7 @@ class LimeSoda_SampleDataGenerator_Model_Processor
                 'min_count' => $rule->getStoreGroupMinCount(),
                 'max_count' => $rule->getStoreGroupMaxCount()  
             );
-            
+
             if ($rule->getAddStoreGroupsOnlyToNewWebsites()) {
                 $options['website_ids'] = $websiteIds;
             }

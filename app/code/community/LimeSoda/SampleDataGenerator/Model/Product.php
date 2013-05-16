@@ -2,6 +2,8 @@
 
 class LimeSoda_SampleDataGenerator_Model_Product extends LimeSoda_SampleDataGenerator_Model_Entity
 {
+    const VALID_CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789ÄÖÜäöüß -/.!?";
+    
     /**
      * Default options for the website model.
      * 
@@ -111,6 +113,147 @@ class LimeSoda_SampleDataGenerator_Model_Product extends LimeSoda_SampleDataGene
     private $_products_deleted = 0;
     
     /**
+     * - 75% of attributes set
+     * - multi selects: between 0 and max. 4 values
+     * - simple selects: 50% probability of attributes set have a value set
+     * - text in all text attributes. Strings between 4 and 80 chars
+     * 
+     * @todo remove fixed values
+     * @param Mage_Catalog_Model_Product $product
+     * @return void
+     */
+    protected function _addCustomData(Mage_Catalog_Model_Product $product)
+    {
+         $attributes = $this->_getRandomAttributes($product->getAttributeSetId(), 75);
+         
+         foreach ($attributes as $attribute) {
+             /**
+              * @todo remove hard coded string.
+              */    
+             if (strpos($attribute['code'], 'sample_attribute_') === false) {
+                 continue;
+             }   
+             
+             switch ($attribute['type']) {
+                 case 'multiselect':
+                     $values = $this->_getRandomValues($this->_getAttributeOptionValues($attribute['attribute_id']), rand(0,4));
+                     $product->setData($attribute['code'], $values);
+                     break;
+                 case 'select':
+                     $setValue = rand(0,1);
+                     $value = ($setValue === 1 ? $this->_getRandomValue($this->_getAttributeOptionValues($attribute['attribute_id'])) : 0);
+                     $product->setData($attribute['code'], $value);
+                     break;
+                 case 'text':
+                     $product->setData($attribute['code'], $this->_getRandomString(self::VALID_CHARACTERS, rand(4,80)));
+                     break;
+             }
+         }
+
+    }
+    
+    /**
+     * @todo document, move
+     */
+    protected $_attributeCache = array(); 
+    
+    /**
+     * Returns the options for an attribute.
+     * 
+     * @todo move
+     * 
+     * @param int $id
+     * @return array
+     */
+    protected function _getAttributeOptionValues($id)
+    {
+        if (!array_key_exists($id, $this->_attributeCache)) {
+             $model = Mage::getModel("catalog/product_attribute_api");
+             
+             $values = array();
+             foreach ($model->options($id) as $option) {
+                 $values[] = $option['value'];
+             }
+             $this->attributeCache[$id] = $values;
+        }
+        return $this->attributeCache[$id];
+    }
+    
+    /**
+     * Returns a random value from an array.
+     * 
+     * @todo move
+     * @param array $data
+     * @return mixed
+     */
+    protected function _getRandomValue(array $data)
+    {
+        $key = array_rand($data);
+        return $data[$key];
+    }
+    
+    /**
+     * Returns random values from an array.
+     * 
+     * @todo: make sure that not more values are selected than are possible for this element.
+     * 
+     * @todo move
+     * @param array $data
+     * @param int $count
+     * @return mixed
+     */
+    protected function _getRandomValues(array $data, $count)
+    {
+        if ($count === 0) {
+            return null;
+        }
+        
+        $keys = array_rand($data, $count);
+
+        if (!is_array($keys)) {
+            return $data[$keys];
+        } 
+        
+        $result = array();
+        foreach ($keys as $key) {
+            $result[] = $data[$key];
+        }
+        return $result;
+        
+    }
+    
+    /**
+     * @todo move (maybe to own helper class or use Magento standard one if one exists?)
+     * @todo document
+     * @todo rewrite according to coding standards
+     */
+    protected function _getRandomString($valid_chars, $length)
+    {
+        // start with an empty random string
+        $random_string = "";
+    
+        // count the number of chars in the valid chars string so we know how many choices we have
+        $num_valid_chars = strlen($valid_chars);
+    
+        // repeat the steps until we've created a string of the right length
+        for ($i = 0; $i < $length; $i++)
+        {
+            // pick a random number from 1 up to the number of valid chars
+            $random_pick = mt_rand(1, $num_valid_chars);
+    
+            // take the random character out of the string of valid chars
+            // subtract 1 from $random_pick because strings are indexed starting at 0, and we started picking at 1
+            $random_char = $valid_chars[$random_pick-1];
+    
+            // add the randomly-chosen char onto the end of our string so far
+            $random_string .= $random_char;
+        }
+    
+        // return our finished random string
+        return $random_string;
+        }
+    
+    /**
      * Creates a product.
      * 
      * @param int $nextId Next available product id
@@ -135,11 +278,16 @@ class LimeSoda_SampleDataGenerator_Model_Product extends LimeSoda_SampleDataGene
         $product->setStatus(Mage_Catalog_Model_Product_Status::STATUS_ENABLED);
         $product->setVisibility(Mage_Catalog_Model_Product_Visibility::VISIBILITY_BOTH);
         
-        $product->setPrice(1.00);
+        $product->setPrice(rand(1,500));
         $product->setTaxClassId(2);
         
         $product->setCategoryIds($categoryAssignmentIds);
         $product->setWebsiteIDs($websiteIds);
+        
+        /**
+         * @todo Move to event observer.
+         */ 
+        $this->_addCustomData($product);
 
         $product->save();
         
@@ -155,6 +303,53 @@ class LimeSoda_SampleDataGenerator_Model_Product extends LimeSoda_SampleDataGene
         $stockItem->save();
 
         return $product->getId();
+    }
+    
+    /**
+     * @todo move, document
+     */
+    protected $_attributeSetCache = array();
+
+    /**
+     * Returns random attributes from the attribute set.
+     * 
+     * @param int $setId
+     * @param int $percentage Percentage of total attributes
+     * @return array 
+     */
+    protected function _getRandomAttributes($setId, $percentage)
+    {
+        $attributes = $this->_getAttributesForSet($setId);
+
+        $totalCount = count($attributes);
+        $useCount = round($totalCount * $percentage / 100);
+        
+        $randomKeys = array_rand($attributes, $useCount);
+        
+        $result = array();
+        
+        if (is_array($randomKeys)) {
+            foreach ($randomKeys as $key) {
+                $result[] = $attributes[$key];
+            }    
+        } else {
+            $result[] = $attributes[$randomKeys];
+        }
+        
+        return $result;
+    }
+    
+    /**
+     * @todo move, document
+     */
+    protected function _getAttributesForSet($setId)
+    {
+        if (!array_key_exists($setId, $this->_attributeSetCache)) {
+             $model = Mage::getModel("catalog/product_attribute_api");
+             $this->_attributeSetCache[$setId] = $model->items($setId);
+             
+        }
+        return $this->_attributeSetCache[$setId];
     }
     
     public function deleteProducts()

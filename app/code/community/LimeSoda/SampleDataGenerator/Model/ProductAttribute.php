@@ -11,6 +11,17 @@ class LimeSoda_SampleDataGenerator_Model_ProductAttribute extends LimeSoda_Sampl
         'attribute_set_ids' => array(),
         'min_count' => 0,
         'max_count' => 0,
+        'frontend_input_type' => array(
+            'multiselect' => array(
+                'share' => 0,
+            ),
+            'select' => array(
+                'share' => 0,
+            ),
+            'text' => array(
+                'share' => 100
+            )
+        )
     );
     
     private $_atts_deleted = 0;
@@ -32,7 +43,46 @@ class LimeSoda_SampleDataGenerator_Model_ProductAttribute extends LimeSoda_Sampl
     }
     
     /**
+     * Performs type-specific actions after the initial attribute creation.
+     * 
+     * @param Mage_Catalog_Model_Product_Attribute_Api
+     * @param string $type
+     * @param int $id
+     * @param array $attributeData
+     * @return void
+     */
+    protected function _createAfter($apiModel, $type, $id, array $attributeData)
+    {
+        switch ($type) {
+            case 'multiselect':
+            case 'select':
+                /**
+                 * @todo More sophisticated creation of options.
+                 */
+                for ($i = 1, $optionCount = rand(4,10); $i <= $optionCount; $i++) {
+                    $option = array(
+                        "label" => array(
+                            array(
+                                'store_id' => array(0),
+                                'value' => 'Option ' . $i
+                            )
+                        ),
+                        "order" => 0,
+                        "is_default" => ($i === 1 ? 1 : 0)
+                    );
+                    $apiModel->addOption($attributeData['attribute_code'], $option); 
+                }
+                
+                break;
+            default:
+                return; 
+        }
+    }
+    
+    /**
      * Returns the attribute set ids where attributes should be added to.
+     * 
+     * If no ids are specified, a random selection of attribute sets is provided.
      * 
      * @param array $ids
      * @return array
@@ -44,7 +94,150 @@ class LimeSoda_SampleDataGenerator_Model_ProductAttribute extends LimeSoda_Sampl
         }
         
         $entityType = Mage::getModel('catalog/product')->getResource()->getEntityType();
-        return Mage::getResourceModel('eav/entity_attribute_set_collection')->setEntityTypeFilter($entityType->getId())->getAllIds();
+        $allIds = Mage::getResourceModel('eav/entity_attribute_set_collection')->setEntityTypeFilter($entityType->getId())->getAllIds();
+        
+        $count = rand(1,count($allIds));
+        $randomkeys = array_rand($allIds, $count);
+        
+        $result = array();
+        if (is_array($randomkeys)) {
+            foreach ($randomkeys as $key) {
+                $result[] = $allIds[$key];
+            }
+        } else {
+            $result[] = $allIds[$randomkeys];
+        }
+        
+        return $result;
+    }
+    
+    protected function _getData($type, $attributeId)
+    {
+        switch ($type) {
+            case 'multiselect':
+                $attributeData = $this->_getMultiSelectData($attributeId);
+                break;
+            case 'select':
+                $attributeData = $this->_getSelectData($attributeId);
+                break;
+            case 'text':
+                $attributeData = $this->_getTextData($attributeId);
+                break;
+            default:
+                throw new Exception ("Unknown attribute type '$type'."); 
+        }
+        
+        return $attributeData;
+    }
+    
+    /**
+     * Returns random data for attributes of type 'multiselect'.
+     * For possible values see http://www.magentocommerce.com/api/soap/catalog/catalogProductAttribute/product_attribute.create.html
+     * 
+     * @param int $attributeId
+     * @return array
+     */
+    protected function _getMultiselectData($attributeId)
+    {
+        return array( 
+            "attribute_code" => "sample_attribute_{$attributeId}",
+            "frontend_input" => "multiselect",
+            "scope" => $this->_getRandomScope(),
+            "default_value" => "",
+            "is_unique" => 0,
+            "is_required" => 0,
+            "apply_to" => array(),
+            "is_configurable" => rand(0, 1),
+            "is_searchable" => rand(0, 1),
+            "is_visible_in_advanced_search" => rand(0, 1),
+            "is_comparable" => rand(0, 1),
+            "is_used_for_promo_rule" => rand(0, 1),
+            "is_visible_on_front" => rand(0, 1),
+            "used_in_product_listing" => rand(0, 1),
+            "frontend_label" => array(array("store_id" => 0, "label" => "Sample Attribute {$attributeId}")),
+            "additional_fields" => array(
+                "is_filterable" => rand(0,1),
+                "is_filterable_in_search" => rand(0,1),
+                "position"  => 0,
+            ),
+        );
+    }
+
+    /**
+     * Returns a random scope level ("store", "website" or "global").
+     * 
+     * @todo Refactor and move out of class?
+     * @return string
+     */
+    protected function _getRandomScope()
+    {
+        $scopes = array("store, website, global");
+        $key = array_rand($scopes);
+        
+        return $scopes[$key];
+    }
+    
+    /**
+     * Returns random data for attributes of type 'select'.
+     * For possible values see http://www.magentocommerce.com/api/soap/catalog/catalogProductAttribute/product_attribute.create.html
+     * 
+     * @param int $attributeId
+     * @return array
+     */
+    protected function _getSelectData($attributeId)
+    {
+        return array( 
+            "attribute_code" => "sample_attribute_{$attributeId}",
+            "frontend_input" => "select",
+            "scope" => $this->_getRandomScope(),
+            "default_value" => "",
+            "is_unique" => 0,
+            "is_required" => 0,
+            "apply_to" => array(),
+            "is_configurable" => rand(0, 1),
+            "is_searchable" => rand(0, 1),
+            "is_visible_in_advanced_search" => rand(0, 1),
+            "is_comparable" => rand(0, 1),
+            "is_used_for_promo_rule" => rand(0, 1),
+            "is_visible_on_front" => rand(0, 1),
+            "used_in_product_listing" => rand(0, 1),
+            "frontend_label" => array(array("store_id" => 0, "label" => "Sample Attribute {$attributeId}")),
+            "additional_fields" => array(
+                "is_filterable" => rand(0,1),
+                "is_filterable_in_search" => rand(0,1),
+                "position"  => 0,
+                "used_for_sort_by" => 0,
+            ),
+        );
+    }
+    
+    /**
+     * Returns random data for attributes of type 'text'.
+     * For possible values see http://www.magentocommerce.com/api/soap/catalog/catalogProductAttribute/product_attribute.create.html
+     * 
+     * @param int $attributeId
+     * @return array
+     */
+    protected function _getTextData($attributeId)
+    {
+        return array( 
+            "attribute_code" => "sample_attribute_{$attributeId}",
+            "frontend_input" => "text",
+            "scope" => $this->_getRandomScope(),
+            "default_value" => "",
+            "is_unique" => 0,
+            "is_required" => 0,
+            "apply_to" => array(),
+            "is_configurable" => rand(0, 1),
+            "is_searchable" => rand(0, 1),
+            "is_visible_in_advanced_search" => rand(0, 1),
+            "is_comparable" => rand(0, 1),
+            "is_used_for_promo_rule" => rand(0, 1),
+            "is_visible_on_front" => rand(0, 1),
+            "used_in_product_listing" => rand(0, 1),
+            "additional_fields" => array(),
+            "frontend_label" => array(array("store_id" => 0, "label" => "Sample Attribute {$attributeId}")),
+        );
     }
     
     /**
@@ -76,30 +269,22 @@ class LimeSoda_SampleDataGenerator_Model_ProductAttribute extends LimeSoda_Sampl
             $model = Mage::getModel("catalog/product_attribute_api");
             
             /**
-             * @see http://www.magentocommerce.com/api/soap/catalog/catalogProductAttribute/product_attribute.create.html
+             * @todo Typ entsprechend der Anteile der Attribut-Typen festlegen.
              */
-            $attributeData = array( 
-                "attribute_code" => "sample_attribute_{$attributeId}",
-                "frontend_input" => "text",
-                "scope" => "store", // [store|website|global]
-                "default_value" => "",
-                "is_unique" => 0,
-                "is_required" => 0,
-                "apply_to" => array(),
-                "is_configurable" => rand(0, 1),
-                "is_searchable" => rand(0, 1),
-                "is_visible_in_advanced_search" => rand(0, 1),
-                "is_comparable" => rand(0, 1),
-                "is_used_for_promo_rule" => rand(0, 1),
-                "is_visible_on_front" => rand(0, 1),
-                "used_in_product_listing" => rand(0, 1),
-                "additional_fields" => array(),
-                "frontend_label" => array(array("store_id" => 0, "label" => "Sample Attribute {$attributeId}")),
-            );
+            $type = 'text';
             
+            /**
+             * @todo Refactor to use event or put in class outside?
+             */
+            $attributeData = $this->_getData($type, $attributeId);
+                        
             $id = $model->create($attributeData);
-            
             $this->_assignAttributeToSets($id, $attributeSetIds);
+            
+            /**
+             * @todo Refactor to use event?
+             */
+            $this->_createAfter($model, $type, $id, $attributeData);
 
             $results[] = $id;
         }
