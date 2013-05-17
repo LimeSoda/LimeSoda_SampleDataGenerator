@@ -43,6 +43,8 @@ class LimeSoda_SampleDataGenerator_Model_Product extends LimeSoda_SampleDataGene
     {
         if ($count === 0) {
             return array();
+        } elseif ($count > count($sourceArray)) {
+            $count = count($sourceArray);
         }
 
         $keys = array_rand($sourceArray, $count);
