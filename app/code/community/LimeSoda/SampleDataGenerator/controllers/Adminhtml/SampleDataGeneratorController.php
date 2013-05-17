@@ -148,12 +148,13 @@ class LimeSoda_SampleDataGenerator_Adminhtml_SampleDataGeneratorController exten
     public function saveAction()
     {
         if ($postData = $this->getRequest()->getPost()) {
+            
             $model = Mage::getSingleton('ls_sampledatagenerator/rule');
             $model->setData($postData);
- 
+            
             try {
                 $model->save();
-                
+
                 Mage::getSingleton('adminhtml/session')->addSuccess($this->__('The rule has been saved.'));
                 Mage::getSingleton('adminhtml/session')->setFormData(false);
                 

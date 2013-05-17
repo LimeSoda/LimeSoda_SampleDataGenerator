@@ -2,7 +2,7 @@
 <config>
     <modules>
         <LimeSoda_SampleDataGenerator>
-            <version>0.0.8</version>
+            <version>0.0.9</version>
         </LimeSoda_SampleDataGenerator>
     </modules>
     
@@ -33,6 +33,24 @@
     			<class>LimeSoda_SampleDataGenerator_Block</class>
     		</ls_sampledatagenerator>
     	</blocks>
+    	<events>
+    		<ls_sampledatagenerator_rule_save_before>
+                <observers>
+                    <ls_sampledatagenerator_observer>
+                        <class>ls_sampledatagenerator/observer</class>
+                        <method>ruleSaveBefore</method>
+                    </ls_sampledatagenerator_observer>
+                </observers>
+            </ls_sampledatagenerator_rule_save_before>
+            <ls_sampledatagenerator_rule_load_after>
+                <observers>
+                    <ls_sampledatagenerator_observer>
+                        <class>ls_sampledatagenerator/observer</class>
+                        <method>ruleLoadAfter</method>
+                    </ls_sampledatagenerator_observer>
+                </observers>
+            </ls_sampledatagenerator_rule_load_after>
+    	</events>
     	<helpers>
     		<ls_sampledatagenerator>
     			<class>LimeSoda_SampleDataGenerator_Helper</class>

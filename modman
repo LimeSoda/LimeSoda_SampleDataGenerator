@@ -1,5 +1,6 @@
 app/code/community/LimeSoda/SampleDataGenerator/ app/code/community/LimeSoda/SampleDataGenerator/
 app/design/adminhtml/default/default/layout/ls_sampledatagenerator/ls_sampledatagenerator.xml app/design/adminhtml/default/default/layout/ls_sampledatagenerator/ls_sampledatagenerator.xml
+app/design/adminhtml/default/default/template/ls_sampledatagenerator/ app/design/adminhtml/default/default/template/ls_sampledatagenerator/
 app/etc/modules/LimeSoda_SampleDataGenerator.xml app/etc/modules/LimeSoda_SampleDataGenerator.xml
 tools/deleteAttributes.php tools/deleteAttributes.php
 tools/index.php tools/index.php

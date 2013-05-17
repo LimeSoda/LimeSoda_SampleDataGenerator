@@ -1,0 +1,87 @@
+<?php
+/**
+ * @var $this LimeSoda_SampleDataGenerator_Block_Adminhtml_Rule_Edit_Tab_Categories_Nested
+ */
+?>
+<?php $_htmlId      = $this->getElement()->getHtmlId() ?>
+<?php $_htmlClass   = $this->getElement()->getClass() ?>
+<?php $_htmlName    = $this->getElement()->getName() ?>
+<tr>
+    <td class="label"><?php echo $this->getElement()->getLabel() ?></td>
+    <td colspan="10" class="grid tier">
+    <table cellspacing="0" class="data border" id="<?php echo $_htmlId; ?>_table">
+        <col width="135" />
+        <col width="120" />
+        <col width="120" />
+        <thead>
+            <tr class="headings">
+                <th><?php echo Mage::helper('ls_sampledatagenerator')->__('Category level'); ?></th>
+                <th><?php echo Mage::helper('ls_sampledatagenerator')->__('Minimum count'); ?></th>
+                <th><?php echo Mage::helper('ls_sampledatagenerator')->__('Maximum count'); ?></th>
+                <th class="last"><?php echo Mage::helper('ls_sampledatagenerator')->__('Action') ?></th>
+            </tr>
+        </thead>
+        <tbody id="<?php echo $_htmlId ?>_container"></tbody>
+        <tfoot>
+            <tr>
+                <td colspan="4" class="a-right"><?php echo $this->getAddButtonHtml() ?></td>
+            </tr>
+        </tfoot>
+    </table>
+
+<script type="text/javascript">
+//<![CDATA[
+var categoryLevelRowTemplate = '<tr class="category_level_row">'
+    + '<td class="category_level_row_count"><?php echo Mage::helper('ls_sampledatagenerator')->__("Level"); ?> {{level}}</td>'
+    + '<td class="nobr"><input class="<?php echo $_htmlClass ?>" type="text" name="<?php echo $_htmlName ?>[{{index}}][min_count]" value="{{min_count}}" id="category_level_row_{{index}}_min_count" size="10" /></td>'
+    + '<td class="nobr"><input class="<?php echo $_htmlClass ?>" type="text" name="<?php echo $_htmlName ?>[{{index}}][max_count]" value="{{max_count}}" id="category_level_row_{{index}}_max_count" size="10" /></td>'
+    + '<td class="last">'
+    + '<button title="<?php echo Mage::helper('ls_sampledatagenerator')->__("Delete category level") ?>" type="button" class="scalable delete icon-btn" id="category_level_row_{{index}}_delete_button" onclick="return categoryLevel.deleteItem(event);">'
+    + '<span><span><span><?php echo Mage::helper('ls_sampledatagenerator')->__("Delete") ?></span></span></span></button></td>'
+    + '</tr>';
+
+var categoryLevel = {
+    template: new Template(categoryLevelRowTemplate, new RegExp('(^|.|\\r|\\n)({{\\s*(\\w+)\\s*}})', "")),
+    index: 0,
+    itemsCount: 0,
+    addItem : function () {
+        var data = {
+            min_count: '0',
+            max_count: '0',
+            index: this.index++,
+            level: ++this.itemsCount,
+        };
+
+        if(arguments.length >= 2) {
+            data.min_count  = arguments[0];
+            data.max_count  = arguments[1];
+        }
+
+        Element.insert($('<?php echo $_htmlId ?>_container'), {
+            bottom : this.template.evaluate(data)
+        });
+
+        $('<?php echo $_htmlId ?>_container').select('input', 'select').each(function(el){ Event.observe(el, 'change', el.setHasChanges.bind(el)); });
+    },
+    deleteItem: function(event) {
+        var tr = Event.findElement(event, 'tr');
+        if (tr) {
+            Element.remove(tr);
+        }
+        
+        this.itemsCount--;
+        
+        var index = 1;
+        $('<?php echo $_htmlId; ?>_container').select('.category_level_row_count').each(function(el) {
+            el.update('<?php echo Mage::helper('ls_sampledatagenerator')->__("Level"); ?> ' + index++);
+        });
+        
+        return false;
+    }
+};
+<?php foreach ($this->getElement()->getValue() as $_item): ?>
+categoryLevel.addItem('<?php echo $_item['min_count'] ?>', '<?php echo $_item['max_count'] ?>');
+<?php endforeach; ?>
+//]]>
+</script>
+</td></tr>

@@ -59,10 +59,9 @@ class LimeSoda_SampleDataGenerator_Model_Category extends LimeSoda_SampleDataGen
             $categoryIds[] = $categoryId;
             
             if (!empty($options['subcategories']) && array_key_exists('categories', $options['subcategories'])) {
-                $subCategoryIds = $this->_createCategories($options['subcategories']['categories'], $categoryId); 
+                $subCategoryIds = $this->_createCategories($options['subcategories']['categories'], $categoryId);
+                $categoryIds = array_merge($categoryIds, $subCategoryIds); 
             }
-            
-            $categoryIds = array_merge($categoryIds, $subCategoryIds);
             
         }
         

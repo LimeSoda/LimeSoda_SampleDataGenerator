@@ -2,6 +2,8 @@
 
 class LimeSoda_SampleDataGenerator_Model_Rule extends Mage_Core_Model_Abstract
 {
+    protected $_eventPrefix = 'ls_sampledatagenerator_rule';
+    
     public function _construct()
     {
         parent::_construct();
@@ -9,31 +11,25 @@ class LimeSoda_SampleDataGenerator_Model_Rule extends Mage_Core_Model_Abstract
     }
     
     /**
-     * @todo: add column to table, write de- and serialisation get/set methods
+     * Returns the options for categories.
+     * 
+     * @return array
      */
     public function getCategoryOptions()
     {
-        return array();
+        $categories = $this->getCategories();
+        $result = array();
         
-        return array(
-            'categories' => array(
-                'min_count' => 7,
-                'max_count' => 7,
-                'subcategories' => array(
-                    'categories' => array(
-                        'min_count' => 6,
-                        'max_count' => 6,
-                        'subcategories' => array(
-                            'categories' => array(
-                                'min_count' => 3,
-                                'max_count' => 3,
-                                'subcategories' => array()
-                            )
-                        )
-                    )
-                )
-            )
-        );
+        foreach (array_reverse($categories) as $category) {
+            
+            $category['subcategories'] = $result;
+            
+            $result = array(
+                'categories' => $category
+            );
+        }
+        
+        return $result;
     }
     
     /**

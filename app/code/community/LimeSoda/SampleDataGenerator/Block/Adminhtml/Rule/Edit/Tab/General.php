@@ -7,6 +7,7 @@ class LimeSoda_SampleDataGenerator_Block_Adminhtml_Rule_Edit_Tab_General extends
         $model  = Mage::registry('ls_sampledatagenerator_rule');
         $form   = new Varien_Data_Form();
         
+        /* General */
         $fieldset = $form->addFieldset('rule_general',
            array('legend' => $helper->__('General Information'))
         );
@@ -22,6 +23,18 @@ class LimeSoda_SampleDataGenerator_Block_Adminhtml_Rule_Edit_Tab_General extends
             'label'     => $helper->__('Title'),
             'title'     => $helper->__('Title'),
             'required'  => true,
+        ));
+        
+        /* Documentation */
+        $fieldset = $form->addFieldset('rule_documentation',
+           array('legend' => $helper->__('Documentation'))
+        );
+        
+        $fieldset->addField('usage', 'note', array(
+            'name'      => 'usage',
+            'label'     => $helper->__('Usage'),
+            'title'     => $helper->__('Usage'),
+            'text'      => $helper->__('In the following tabs you can specify <strong>how many more</strong> websites, attributes, producte and so on should be created.<br /><br />The number of current entities is not considered.<br /><br />This means that if your store has 100 products and you enter 150 products, the extension will not create 50 more products but 150 new products (leading to a total of 250 products).'),
         ));
         
         $form->setValues($model->getData());
