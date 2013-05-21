@@ -2,7 +2,7 @@
 <config>
     <modules>
         <LimeSoda_SampleDataGenerator>
-            <version>0.0.9</version>
+            <version>0.1.0</version>
         </LimeSoda_SampleDataGenerator>
     </modules>
     

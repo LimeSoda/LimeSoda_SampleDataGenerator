@@ -4,13 +4,19 @@ Tool to generate Magento websites, stores, categories, products, customers etc.
 
 Facts
 -----
-- version: 0.0.9
+- version: 0.1.0
 - extension key: LimeSoda_SampleDataGenerator
 - [extension on GitHub](https://github.com/LimeSoda/LimeSoda_SampleDataGenerator)
 
 Description
 -----------
 Tool to generate Magento websites, stores, categories, products, customers etc.
+
+This version is a preview (and early alpha). Please only use it on test databases and always keep a backup of your data.
+
+Changelog
+---------
+See [Changelog](https://github.com/LimeSoda/LimeSoda_SampleDataGenerator/blob/master/CHANGELOG.md).
 
 Requirements
 ------------
@@ -27,11 +33,6 @@ Installation Instructions
 Uninstallation
 --------------
 1. Uninstall the extension like any other modman extension.
-
-Todos (@todo)
--------------
-* Add events for creating data (products, categories, attribute options, ...)
-* Move current data creation to event observers.
 
 Support
 -------
