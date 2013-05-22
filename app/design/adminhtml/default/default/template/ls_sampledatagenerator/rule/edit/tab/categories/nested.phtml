@@ -79,9 +79,13 @@ var categoryLevel = {
         return false;
     }
 };
-<?php foreach ($this->getElement()->getValue() as $_item): ?>
+<?php
+    if (is_array( $this->getElement()->getValue())):
+        foreach ($this->getElement()->getValue() as $_item): ?>
 categoryLevel.addItem('<?php echo $_item['min_count'] ?>', '<?php echo $_item['max_count'] ?>');
-<?php endforeach; ?>
+<?php
+        endforeach;
+    endif; ?>
 //]]>
 </script>
 </td></tr>
