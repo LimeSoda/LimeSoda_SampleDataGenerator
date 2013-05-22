@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.1.1
+0.1.1 (22.05.2013)
 -----
 * Closed #3 - Add notice for "Allow symlinks" setting to readme
 * Closed #4 - Update README.md (thanks to @hans2103)

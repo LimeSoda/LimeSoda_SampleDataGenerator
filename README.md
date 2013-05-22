@@ -4,7 +4,7 @@ Tool to generate Magento websites, stores, categories, products, customers etc.
 
 Facts
 -----
-- version: 0.1.0
+- version: 0.1.1
 - extension key: LimeSoda_SampleDataGenerator
 - [extension on GitHub](https://github.com/LimeSoda/LimeSoda_SampleDataGenerator)
 
