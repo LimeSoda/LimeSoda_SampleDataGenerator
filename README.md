@@ -29,6 +29,8 @@ Compatibility
 Installation Instructions
 -------------------------
 1. Install the extension like any other [modman extension](https://github.com/colinmollenhour/modman/wiki/Tutorial).
+2. If you use modman or composer and link the files to the Magento source code using symlinks, please enable
+   "System > Config > Advanced > Developer > Template Settings > Allow Symlinks" to make the backend work.
 
 Uninstallation
 --------------
