@@ -28,7 +28,7 @@ Compatibility
 
 Installation Instructions
 -------------------------
-1. Install the extension like any other modman extension.
+1. Install the extension like any other [modman extension](https://github.com/colinmollenhour/modman/wiki/Tutorial).
 
 Uninstallation
 --------------
