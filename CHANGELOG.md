@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.1.2 (01.09.2013)
+-----
+* Added composer.json (thanks to bragento)
+
 0.1.1 (22.05.2013)
 -----
 * Closed #3 - Add notice for "Allow symlinks" setting to readme
