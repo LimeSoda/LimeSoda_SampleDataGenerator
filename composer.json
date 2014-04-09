@@ -1,8 +1,8 @@
 {
-    "name": "limesoda/sampledatagenerator",
-    "license": "OSL-3.0",
+    "name": "limesoda/limesoda_sample-data-generator",
     "type": "magento-module",
-    "description": "Tool to generate Magento websites, stores, categories, products, customers etc",
+    "license": "OSL-3.0",
+    "description": "Tool to generate Magento websites, stores, categories, products, customers etc.",
     "homepage": "https://github.com/LimeSoda/LimeSoda_SampleDataGenerator",
     "require": {
         "magento-hackathon/magento-composer-installer": "*"
@@ -11,7 +11,8 @@
     },
     "authors":[
         {
-            "name":"LimeSoda Interactive Marketing GmbH"
+            "name": "Matthias Zeis",
+            "email": "m.zeis@limesoda.com"
         }
     ]
 }
